@@ -24,7 +24,7 @@ The 3d printed lid does not interfere with its detection abilities.
 <img src="img/pedestal_front.jpg">
 <img src="img/pedestal_rear.jpg">
 <img src="img/corner_mount.jpg">
-<img src="img/flush_wall_mount.jpg">
+<img src="img/flush_wall_mount.png">
 
 ---
 
