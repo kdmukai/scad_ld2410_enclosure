@@ -12,8 +12,8 @@ show_pcb = false;
 
 
 // Parameters
-pcb_width = 22.3;
-pcb_length = 16.9;
+pcb_width = 22;
+pcb_length = 16;
 pcb_thickness = 1.6;
 
 // Tray parameters
@@ -29,11 +29,11 @@ pcb_height_from_bottom = 2.5;  // Height to hold PCB above bottom
 corner_support_height = 3.75;  // Height of corner supports
 corner_support_size = 2;  // Size of corner supports
 ridge_height = 0.5;  // Height of front ridge
-ridge_depth = 0.5;  // How far ridge extends into cavity
+ridge_depth = 0.75;  // How far ridge extends into cavity
 bottom_fillet_radius = 1;  // Radius for bottom edge fillet
 thin_wall_thickness = 1;  // Thickness of top portion of walls
 thin_wall_height = 2.5;  // Height of thin wall section at top
-gap_behind_pin_headers = 1.5;
+gap_behind_pin_headers = 2.5;
 
 foot_width = 4;  // Left-right width after rotation
 foot_depth = 8;  // How far back from front face after rotation
@@ -42,8 +42,8 @@ foot_spacing = 4.5;  // Distance from edge
 
 
 // Calculated dimensions
-inner_width = pcb_width + clearance * 2;
-inner_length = pcb_length + gap_behind_pin_headers + clearance * 2;
+inner_width = pcb_width + clearance * 3;  // clearance on each side, plus an additional fudge factor
+inner_length = pcb_length + gap_behind_pin_headers + clearance * 3;
 outer_width = inner_width + wall_thickness * 2;
 outer_length = inner_length + wall_thickness * 2;
 total_height = base_thickness + pcb_thickness + wall_height;
@@ -116,10 +116,16 @@ difference() {
         cylinder(d=cable_diameter, h=base_thickness + 1, $fn=64);
 }
 
-// Notch extending inward from rear wall (3mm wide from center extending left, 1mm deep)
+// Notch extending inward from rear wall (3mm wide, 1mm from left wall)
 notch_width = 3;
 notch_depth = gap_behind_pin_headers - clearance;
-translate([outer_width/2 - notch_width,
+translate([wall_thickness + 1,
+           wall_thickness + inner_length - notch_depth,
+           base_thickness - floor_offset])
+    cube([notch_width, notch_depth, total_height - base_thickness + floor_offset]);
+
+// Second notch on rear wall (3mm wide, 1mm from right wall)
+translate([wall_thickness + inner_width - notch_width - 1,
            wall_thickness + inner_length - notch_depth,
            base_thickness - floor_offset])
     cube([notch_width, notch_depth, total_height - base_thickness + floor_offset]);
@@ -190,7 +196,7 @@ if (show_lid) {
     lid_clearance = 0.0;
     
     // Position lid above tray
-    translate([0, 0, total_height + 10]) {
+    translate([0, 0, total_height + 20]) {
         difference() {
             // Outer shell
             rounded_rect(outer_width, outer_length, lid_height, corner_radius);
@@ -215,9 +221,9 @@ if (has_pedestal) {
     base_size = 25;
     base_height = 4.5;
     base_thickness = 2;  // Thickness of base plate
-    base_offset = 20;  // Distance below tray
+    base_offset = 25;  // Distance below tray
     
-    translate([outer_width/2 - base_size/2, -base_offset + 0.5*foot_height, -base_offset]) {
+    translate([outer_width/2 - base_size/2, -20 + 0.5*foot_height, -base_offset]) {
         difference() {
             union() {
                 // Base plate
@@ -273,19 +279,19 @@ if (has_corner_mount) {
     floor_thickness = 2;
     base_offset = 20;  // Distance below tray
     wedge_height = base_width/2;  // Height for 90-degree tip angle
-    corner_radius_mount = 2;  // Radius for front corners
+    corner_radius_mount = 5;  // Radius for front corners
     
-    translate([outer_width/2 - base_width/2, -base_offset + 0.5*foot_height + 5, -50]) {
+    translate([outer_width/2 - base_width/2, -base_offset + 0.5*foot_height + 5, -55]) {
         difference() {
             union() {
                 // Base plate with rounded front corners
                 hull() {
                     // Front left corner
                     translate([corner_radius_mount, corner_radius_mount, -floor_thickness])
-                        cylinder(r=corner_radius_mount, h=base_thickness + floor_thickness, $fn=32);
+                        cylinder(r=corner_radius_mount, h=base_thickness + floor_thickness, $fn=64);
                     // Front right corner
                     translate([base_width - corner_radius_mount, corner_radius_mount, -floor_thickness])
-                        cylinder(r=corner_radius_mount, h=base_thickness + floor_thickness, $fn=32);
+                        cylinder(r=corner_radius_mount, h=base_thickness + floor_thickness, $fn=64);
                     // Rear section (full width)
                     translate([0, base_depth, -floor_thickness])
                         cube([base_width, 0.1, base_thickness + floor_thickness]);
@@ -301,56 +307,35 @@ if (has_corner_mount) {
                         ]);
                 
                 // Walls along triangle edges (20mm high, 2mm thick)
-                wall_height = 15;
+                wall_height = 12;
                 wall_thickness = 2;
                 reinforcement_height = 2;  // First 2mm of walls are thicker
                 reinforcement_thickness = 2;  // Extra thickness for reinforcement
-                wall_taper = 4;  // Top is 4mm shorter than bottom
                 translate([0, base_depth, base_thickness]) {
                     // Left angled wall (offset inward so outer face is flush)
-                    translate([wall_thickness / sqrt(2) + 4 / sqrt(2), -wall_thickness / sqrt(2) + 4 / sqrt(2), 0])
+                    translate([wall_thickness / sqrt(2), -wall_thickness / sqrt(2), 0])
                         rotate([0, 0, 45]) {
-                            hull() {
-                                // Bottom
-                                cube([sqrt(2) * wedge_height - 4, wall_thickness, 0.1]);
-                                // Top (4mm shorter, starting 4mm further back)
-                                translate([wall_taper, 0, wall_height])
-                                    cube([sqrt(2) * wedge_height - 4 - wall_taper, wall_thickness, 0.1]);
-                            }
-                            // Inner reinforcement for first 2mm (also tapered)
+                            // Main wall
+                            cube([sqrt(2) * wedge_height, wall_thickness, wall_height]);
+                            
+                            // Inner reinforcement for first 2mm
                             translate([0, -reinforcement_thickness, 0])
-                                hull() {
-                                    // Bottom
-                                    cube([sqrt(2) * wedge_height - 4, reinforcement_thickness, 0.1]);
-                                    // Top at reinforcement_height (proportionally tapered)
-                                    translate([wall_taper * reinforcement_height / wall_height, 0, reinforcement_height])
-                                        cube([sqrt(2) * wedge_height - 4 - wall_taper * reinforcement_height / wall_height, reinforcement_thickness, 0.1]);
-                                }
+                                cube([sqrt(2) * wedge_height, reinforcement_thickness, reinforcement_height]);
                         }
                     
                     // Right angled wall
-                    translate([base_width - 4 / sqrt(2), 4 / sqrt(2), 0])
+                    translate([base_width, 0, 0])
                         rotate([0, 0, 135]) {
-                            hull() {
-                                // Bottom
-                                cube([sqrt(2) * wedge_height - 4, wall_thickness, 0.1]);
-                                // Top (4mm shorter, starting 4mm further back)
-                                translate([wall_taper, 0, wall_height])
-                                    cube([sqrt(2) * wedge_height - 4 - wall_taper, wall_thickness, 0.1]);
-                            }
-                            // Inner reinforcement for first 2mm (also tapered)
+                            // Main wall
+                            cube([sqrt(2) * wedge_height, wall_thickness, wall_height]);
+                            
+                            // Inner reinforcement for first 2mm
                             translate([0, wall_thickness, 0])
-                                hull() {
-                                    // Bottom
-                                    cube([sqrt(2) * wedge_height - 4, reinforcement_thickness, 0.1]);
-                                    // Top at reinforcement_height (proportionally tapered)
-                                    translate([wall_taper * reinforcement_height / wall_height, 0, reinforcement_height])
-                                        cube([sqrt(2) * wedge_height - 4 - wall_taper * reinforcement_height / wall_height, reinforcement_thickness, 0.1]);
-                                }
+                                cube([sqrt(2) * wedge_height, reinforcement_thickness, reinforcement_height]);
                         }
                     
                     // Corner reinforcement (2mm x 2mm vertical piece inside the angle)
-                    translate([base_width/2, wedge_height - 4, 0])
+                    translate([base_width/2, wedge_height - wall_thickness - reinforcement_thickness, 0])
                         rotate([0, 0, 45])
                         translate([-1, -1, 0])
                         cube([2, 2, wall_height + 0.1]);
