@@ -2,6 +2,18 @@
 
 <img src="img/components.jpg">
 
+The ld2410 sensor detects human presence even without movement. It broadcasts its data over bluetooth so it can be put to use as a standalone device with just a 5V power supply.
+
+You can then read in the sensor data over bluetooth into Home Assistant to use in automations.
+
+You can also directly connect an ld2410 to an esp32 via ESPHome and receive the data over UART rx/tx, but I find the simplicity of bluetooth to be preferrable (and it's only 2 wires -- VCC and GND -- vs 4 for UART). 
+
+The placement of these sensors around the house is also much more flexible if they are just self-powered and self-broadcasting.
+
+The 3d printed lid does not interfere with its detection abilities.
+
+---
+
 3d printable files for a ld2410 enclosure with three variants:
 * Freestanding pedestal
 * Corner wall mount
@@ -19,7 +31,7 @@
 * 5V power supply
 * solid core 20-22ga patching wire
 * soldering iron, solder sucker, solder, flux
-* pliers, wire stripper
+* pliers, wire stripper, wire/pin cutter
 
 ---
 
@@ -40,6 +52,8 @@
 Remove the black plastic around the headers using a pair of pliers.
 
 Desolder the GND and VCC pins (see [this tutorial](https://www.youtube.com/watch?v=ATeRNgOUX3o&t=114s) for help).
+
+Cut off the remaining pins.
 
 Feed solid core wire through the pin holes and solder in place. I found it easier to apply flux to the back side of the pcb and solder the wires there; soldering them at the front side of the board did not take the flux as easily due to existing solder residue.
 
