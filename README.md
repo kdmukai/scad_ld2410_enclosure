@@ -14,7 +14,8 @@ The 3d printed lid does not interfere with its detection abilities.
 
 ---
 
-3d printable files for a ld2410 enclosure with three variants:
+### Design variations
+3d printable files include three variants:
 * Freestanding pedestal
 * Corner wall mount
 * Flush wall mount
@@ -23,15 +24,7 @@ The 3d printed lid does not interfere with its detection abilities.
 <img src="img/pedestal_front.jpg">
 <img src="img/pedestal_rear.jpg">
 <img src="img/corner_mount.jpg">
-
----
-
-### Components
-* ld2410 human presence sensor
-* 5V power supply
-* solid core 20-22ga patching wire
-* soldering iron, solder sucker, solder, flux
-* pliers, wire stripper, wire/pin cutter
+<img src="img/flush_wall_mount.jpg">
 
 ---
 
@@ -45,6 +38,15 @@ The 3d printed lid does not interfere with its detection abilities.
   * [Flush wall mount enclosure](files/flush_wall_enclosure.stl)
 
 ---
+
+### Components
+* ld2410 human presence sensor
+* 5V power supply
+* solid core 20-22ga patching wire
+* soldering iron, solder sucker, solder, flux
+* pliers, wire stripper, wire/pin cutter
+
+___
 
 ### Assembly
 <img src="img/installation.jpg">
