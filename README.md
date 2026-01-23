@@ -20,6 +20,8 @@ The 3d printed lid does not interfere with its detection abilities.
 * Corner wall mount
 * Flush wall mount
 
+I used double-sided tape for the wall mounts and under the pedestal to keep it in place.
+
 <img src="img/openscad_playground.png">
 <img src="img/pedestal_front.jpg">
 <img src="img/pedestal_rear.jpg">
